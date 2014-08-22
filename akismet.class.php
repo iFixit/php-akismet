@@ -365,7 +365,7 @@ class Akismet extends AkismetObject {
     */
    function _getQueryString() {
       foreach($_SERVER as $key => $value) {
-         if(!in_array($key, $this->ignore)) {
+         if(!(is_object($value) || is_array($value)) && !in_array($key, $this->ignore)) {
             if($key == 'REMOTE_ADDR') {
                $this->comment[$key] = $this->comment['user_ip'];
             } else {
