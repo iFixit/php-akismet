@@ -343,19 +343,25 @@ class Akismet extends AkismetObject {
     */
    function _fillCommentValues() {
       if(!isset($this->comment['user_ip'])) {
-         $this->comment['user_ip'] = ($_SERVER['REMOTE_ADDR'] != getenv('SERVER_ADDR')) ? $_SERVER['REMOTE_ADDR'] : getenv('HTTP_X_FORWARDED_FOR');
+         $this->comment['user_ip'] = ($this->server('REMOTE_ADDR') != getenv('SERVER_ADDR')) ? $this->server('REMOTE_ADDR') : getenv('HTTP_X_FORWARDED_FOR');
       }
       if(!isset($this->comment['user_agent'])) {
-         $this->comment['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+         $this->comment['user_agent'] = $this->server('HTTP_USER_AGENT');
       }
       if(!isset($this->comment['referrer'])) {
-         $this->comment['referrer'] = $_SERVER['HTTP_REFERER'];
+         $this->comment['referrer'] = $this->server('HTTP_REFERER');
       }
       if(!isset($this->comment['blog'])) {
          $this->comment['blog'] = $this->blogUrl;
       }
    }
 
+   /**
+    * Safe method of using $_SERVER[$key] if $_SERVER[$key] may not exist.
+    */
+   protected function server($key) {
+      return array_key_exists($key, $_SERVER) ? $_SERVER[$key] : null;
+   }
 
    /**
     * Build a query string for use with HTTP requests
